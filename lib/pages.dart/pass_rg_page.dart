@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:clipboard/clipboard.dart';
 import 'package:excel/excel.dart';
 import 'package:flutter/material.dart';
