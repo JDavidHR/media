@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
+import 'package:mc_dashboard/core/models/db_helper/mongodb_connection.dart';
 import 'package:mc_dashboard/pages.dart/login.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await MongoDatabase.connect();
   runApp(const MyApp());
   doWhenWindowReady(() {
     final win = appWindow;

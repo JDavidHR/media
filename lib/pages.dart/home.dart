@@ -19,7 +19,7 @@ class MinimalMenuPage extends StatelessWidget {
                 width: 200,
                 height: 120,
                 child: Image.asset(
-                  'assets/logos/MC_logo.png', // Reemplaza con tu imagen correcta
+                  'assets/logos/MC_logo.png',
                   fit: BoxFit.contain,
                 ),
               ),
@@ -56,6 +56,16 @@ class MinimalMenuPage extends StatelessWidget {
                     ),
                   );
                 },
+              ),
+
+              const SizedBox(height: 20),
+
+              // Informacion clientes
+              _buildMenuButton(
+                context,
+                label: 'Informacion clientes',
+                icon: Icons.folder,
+                onPressed: () {},
               ),
             ],
           ),
