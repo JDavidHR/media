@@ -24,48 +24,49 @@ class MinimalMenuPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 40),
-
-              // Botón: Escalamientos terceros
-              _buildMenuButton(
-                context,
-                label: 'Escalamientos terceros',
-                icon: Icons.groups_2,
-                onPressed: () {},
-              ),
-              const SizedBox(height: 20),
-
-              // Botón: Archivos descargables
-              _buildMenuButton(
-                context,
-                label: 'Archivos descargables',
-                icon: Icons.download,
-                onPressed: () {},
-              ),
-              const SizedBox(height: 20),
-
-              // Botón: Soporte
-              _buildMenuButton(
-                context,
-                label: 'Soporte',
-                icon: Icons.support_agent,
-                onPressed: () {
-                  Navigator.pushReplacement(
+              Wrap(
+                runSpacing: 16,
+                spacing: 16,
+                children: [
+                  // Botón: Escalamientos terceros
+                  _buildMenuButton(
                     context,
-                    MaterialPageRoute(
-                      builder: (context) => const DashboardBasePage(),
-                    ),
-                  );
-                },
-              ),
+                    label: 'Escalamientos terceros',
+                    icon: Icons.groups_2,
+                    onPressed: () {},
+                  ),
 
-              const SizedBox(height: 20),
+                  // Botón: Archivos descargables
+                  _buildMenuButton(
+                    context,
+                    label: 'Archivos descargables',
+                    icon: Icons.download,
+                    onPressed: () {},
+                  ),
 
-              // Informacion clientes
-              _buildMenuButton(
-                context,
-                label: 'Informacion clientes',
-                icon: Icons.folder,
-                onPressed: () {},
+                  // Botón: Soporte
+                  _buildMenuButton(
+                    context,
+                    label: 'Soporte',
+                    icon: Icons.support_agent,
+                    onPressed: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const DashboardBasePage(),
+                        ),
+                      );
+                    },
+                  ),
+
+                  // Informacion clientes
+                  _buildMenuButton(
+                    context,
+                    label: 'Informacion clientes',
+                    icon: Icons.folder,
+                    onPressed: () {},
+                  ),
+                ],
               ),
             ],
           ),

@@ -1,7 +1,6 @@
 import 'package:clipboard/clipboard.dart';
-import 'package:excel/excel.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:mc_dashboard/core/models/db_helper/mongodb_connection.dart';
 
 class PassRGPage extends StatefulWidget {
   const PassRGPage({super.key});
@@ -11,106 +10,62 @@ class PassRGPage extends StatefulWidget {
 }
 
 class _PassRGPageState extends State<PassRGPage> {
-  List<Map<String, String>> passRG = [];
-  List<Map<String, String>> filteredPassRG = [];
+  List<Map<String, dynamic>> rgDevices = [];
+  List<Map<String, dynamic>> filteredDevices = [];
   TextEditingController searchController = TextEditingController();
+  bool _isLoading = true;
+  String? _loadError;
 
   @override
   void initState() {
     super.initState();
     _loadPassRG();
-    searchController.addListener(_filterPassRG);
+    searchController.addListener(_filterDevices);
   }
 
   @override
   void dispose() {
-    searchController.removeListener(_filterPassRG);
+    searchController.removeListener(_filterDevices);
     searchController.dispose();
     super.dispose();
   }
 
   Future<void> _loadPassRG() async {
+    setState(() {
+      _isLoading = true;
+      _loadError = null;
+    });
     try {
-      ByteData data = await rootBundle.load('assets/bd_local/BD_TEST.xlsx');
-      final bytes = data.buffer.asUint8List();
-      final excel = Excel.decodeBytes(bytes);
-
-      print("📄 Hojas disponibles: ${excel.sheets.keys}");
-
-      final sheetName = excel.sheets.keys.firstWhere(
-        (name) => name.trim().toUpperCase() == 'RG_EQUIPOS',
-        orElse: () => '',
-      );
-
-      if (sheetName.isEmpty) {
-        throw Exception("❌ Hoja 'RG_EQUIPOS' no encontrada");
-      }
-
-      final sheet = excel[sheetName];
-
-      // Leer encabezados normalizados
-      final headerRow = sheet.row(0).map((cell) {
-        return cell?.value.toString().trim().toUpperCase() ?? '';
-      }).toList();
-
-      print("🧾 Encabezados encontrados: $headerRow");
-
-      final idIndex = headerRow.indexWhere((val) => val == 'ID');
-      final ciudadIndex = headerRow.indexWhere((val) => val == 'CIUDAD');
-      final passIndex = headerRow.indexWhere((val) => val == 'PASS');
-
-      if (idIndex == -1 || ciudadIndex == -1 || passIndex == -1) {
-        throw Exception(
-            "❌ Encabezados requeridos no encontrados: ID, CIUDAD, PASS");
-      }
-
-      final List<Map<String, String>> tempList = [];
-
-      for (int i = 1; i < sheet.maxRows; i++) {
-        final row = sheet.row(i);
-
-        final id = row.length > idIndex
-            ? row[idIndex]?.value.toString().trim() ?? ''
-            : '';
-        final ciudad = row.length > ciudadIndex
-            ? row[ciudadIndex]?.value.toString().trim() ?? ''
-            : '';
-        final pass = row.length > passIndex
-            ? row[passIndex]?.value.toString().trim() ?? ''
-            : '';
-
-        if (id.isNotEmpty && ciudad.isNotEmpty && pass.isNotEmpty) {
-          tempList.add({'ID': id, 'CIUDAD': ciudad, 'PASS': pass});
-        }
-      }
+      final collection = MongoDatabase.db.collection('rg_devices');
+      final data = await collection.find().toList();
 
       setState(() {
-        passRG = tempList;
-        filteredPassRG = List.from(passRG);
+        rgDevices = data;
+        filteredDevices = List.from(rgDevices);
       });
     } catch (e) {
       print('❌ Error al cargar datos: $e');
       Future.delayed(Duration.zero, () {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Error al cargar la hoja RG_EQUIPOS")),
+          const SnackBar(
+              content: Text("Error al cargar la colección RG Devices")),
         );
       });
     }
   }
 
-  void _filterPassRG() {
-    String query = searchController.text.toLowerCase();
+  void _filterDevices() {
+    final query = searchController.text.toLowerCase();
     setState(() {
-      filteredPassRG = passRG
-          .where((entry) => entry['CIUDAD']!.toLowerCase().contains(query))
+      filteredDevices = rgDevices
+          .where((item) =>
+              item['city']?.toString().toLowerCase().contains(query) ?? false)
           .toList();
     });
   }
 
-  void _copyToClipboard(BuildContext context, String id, String pass) {
-    // final String copyText = 'ID: $id - Contraseña: $pass';
-    final String copyText = pass;
-    FlutterClipboard.copy(copyText).then((_) {
+  void _copyToClipboard(BuildContext context, String pass) {
+    FlutterClipboard.copy(pass).then((_) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Contraseña copiada")),
       );
@@ -135,14 +90,14 @@ class _PassRGPageState extends State<PassRGPage> {
           ),
         ),
         Expanded(
-          child: filteredPassRG.isEmpty
+          child: filteredDevices.isEmpty
               ? const Center(child: CircularProgressIndicator())
               : ListView.builder(
-                  itemCount: filteredPassRG.length,
+                  itemCount: filteredDevices.length,
                   itemBuilder: (context, index) {
-                    final ciudad = filteredPassRG[index]['CIUDAD']!;
-                    final pass = filteredPassRG[index]['PASS']!;
-                    final id = filteredPassRG[index]['ID']!;
+                    final city =
+                        filteredDevices[index]['city'] ?? 'Desconocido';
+                    final pass = filteredDevices[index]['password'] ?? '';
                     return Card(
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
@@ -150,7 +105,7 @@ class _PassRGPageState extends State<PassRGPage> {
                       elevation: 3,
                       child: ListTile(
                         title: Text(
-                          ciudad,
+                          city,
                           style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -159,7 +114,7 @@ class _PassRGPageState extends State<PassRGPage> {
                         subtitle: Text('Contraseña: $pass'),
                         trailing: IconButton(
                           icon: const Icon(Icons.copy),
-                          onPressed: () => _copyToClipboard(context, id, pass),
+                          onPressed: () => _copyToClipboard(context, pass),
                         ),
                       ),
                     );
