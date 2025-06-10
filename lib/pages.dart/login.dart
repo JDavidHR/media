@@ -6,6 +6,7 @@ import 'package:lottie/lottie.dart';
 import 'package:mc_dashboard/core/components/mcButton.dart';
 import 'package:mc_dashboard/core/components/mcTextfield.dart';
 import 'package:mc_dashboard/dashboard/dashboard_base_page.dart';
+import 'package:mc_dashboard/pages.dart/home.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -104,8 +105,10 @@ class _LoginPageState extends State<LoginPage>
                               Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) =>
-                                        const DashboardBasePage()),
+                                  builder: (context) =>
+                                      //const DashboardBasePage(),
+                                      const MinimalMenuPage(),
+                                ),
                               );
                             });
                           },

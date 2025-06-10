@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:mc_dashboard/pages.dart/equipos_page.dart';
+import 'package:mc_dashboard/pages.dart/home.dart';
 import 'package:mc_dashboard/pages.dart/pass_herramientas_page.dart';
 import 'package:mc_dashboard/pages.dart/pass_rg_page.dart';
 
@@ -43,6 +44,20 @@ class _DashboardBasePageState extends State<DashboardBasePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const MinimalMenuPage(),
+            ),
+          );
+        },
+        icon: const Icon(Icons.arrow_back),
+        label: const Text('Volver'),
+        backgroundColor: Colors.black87,
+        foregroundColor: Colors.white,
+      ),
       body: Row(
         children: [
           BarLeft(
