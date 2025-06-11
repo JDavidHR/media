@@ -1,5 +1,6 @@
 import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
+import 'package:mc_dashboard/core/components/mcTextfield.dart';
 import 'package:mc_dashboard/core/models/db_helper/mongodb_connection.dart';
 import 'package:mc_dashboard/pages.dart/home.dart';
 import 'package:mongo_dart/mongo_dart.dart' as mdb;
@@ -81,33 +82,48 @@ class _ClientInfoPageState extends State<ClientInfoPage> {
     final workloadController = TextEditingController();
     final phoneController = TextEditingController();
     final emailController = TextEditingController();
+    final idServiceController = TextEditingController();
 
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Agregar Cliente'),
+          title: const Text(
+            'Agregar Cliente',
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+            ),
+          ),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                TextField(
+                McTextField(
                   controller: nameController,
-                  decoration: const InputDecoration(labelText: 'Nombre'),
+                  labelText: 'Nombre',
                 ),
-                TextField(
+                const SizedBox(height: 8),
+                McTextField(
                   controller: workloadController,
-                  decoration: const InputDecoration(labelText: 'Cargo'),
+                  labelText: 'Cargo',
                 ),
-                TextField(
+                const SizedBox(height: 8),
+                McTextField(
                   controller: phoneController,
                   keyboardType: TextInputType.phone,
-                  decoration: const InputDecoration(labelText: 'Teléfono'),
+                  labelText: 'Teléfono',
                 ),
-                TextField(
+                const SizedBox(height: 8),
+                McTextField(
                   controller: emailController,
                   keyboardType: TextInputType.emailAddress,
-                  decoration: const InputDecoration(labelText: 'Email'),
+                  labelText: 'Email',
+                ),
+                const SizedBox(height: 8),
+                McTextField(
+                  controller: idServiceController,
+                  keyboardType: TextInputType.emailAddress,
+                  labelText: 'ID',
                 ),
               ],
             ),
@@ -123,11 +139,13 @@ class _ClientInfoPageState extends State<ClientInfoPage> {
                 final workload = workloadController.text.trim();
                 final phone = phoneController.text.trim();
                 final email = emailController.text.trim();
+                final idService = idServiceController.text.trim();
 
                 if (name.isEmpty ||
                     workload.isEmpty ||
                     phone.isEmpty ||
-                    email.isEmpty) {
+                    email.isEmpty ||
+                    idService.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                         content: Text('Todos los campos son obligatorios')),
@@ -144,6 +162,7 @@ class _ClientInfoPageState extends State<ClientInfoPage> {
                     'workload': workload,
                     'phone': phone,
                     'email': email,
+                    'id_service': idService,
                   });
 
                   Navigator.pop(context); // Cierra el diálogo
@@ -241,6 +260,7 @@ class _ClientInfoPageState extends State<ClientInfoPage> {
                   child: DataTable(
                     columnSpacing: 16,
                     columns: const [
+                      DataColumn(label: Text('ID Servicio')),
                       DataColumn(label: Text('Nombre')),
                       DataColumn(label: Text('Cargo')),
                       DataColumn(label: Text('Teléfono')),
@@ -252,7 +272,9 @@ class _ClientInfoPageState extends State<ClientInfoPage> {
                       final workload = client['workload'] ?? '';
                       final phone = client['phone'] ?? '';
                       final email = client['email'] ?? '';
+                      final idService = client['id_service'] ?? '';
                       return DataRow(cells: [
+                        DataCell(Text(idService)),
                         DataCell(Text(name)),
                         DataCell(Text(workload)),
                         DataCell(Text(phone)),
