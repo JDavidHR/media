@@ -10,13 +10,24 @@ class EquiposPage extends StatefulWidget {
 
 class _EquiposPageState extends State<EquiposPage> {
   Map<String, List<Map<String, dynamic>>> equiposPorCategoria = {};
+  Map<String, List<Map<String, dynamic>>> equiposFiltrados = {};
   bool _isLoading = true;
   String? _loadError;
+
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     _loadDevices();
+
+    _searchController.addListener(_applySearch);
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
   Future<void> _loadDevices() async {
@@ -48,6 +59,7 @@ class _EquiposPageState extends State<EquiposPage> {
 
       setState(() {
         equiposPorCategoria = data;
+        equiposFiltrados = Map.from(data); // Inicialmente igual
         _isLoading = false;
       });
     } catch (e) {
@@ -56,6 +68,35 @@ class _EquiposPageState extends State<EquiposPage> {
         _isLoading = false;
       });
     }
+  }
+
+  void _applySearch() {
+    final query = _searchController.text.toLowerCase();
+
+    if (query.isEmpty) {
+      setState(() {
+        equiposFiltrados = Map.from(equiposPorCategoria);
+      });
+      return;
+    }
+
+    final Map<String, List<Map<String, dynamic>>> filtered = {};
+
+    equiposPorCategoria.forEach((categoria, lista) {
+      final matches = lista.where((equipo) {
+        final vendor = equipo['vendor'].toString().toLowerCase();
+        final reference = equipo['reference'].toString().toLowerCase();
+        return vendor.contains(query) || reference.contains(query);
+      }).toList();
+
+      if (matches.isNotEmpty) {
+        filtered[categoria] = matches;
+      }
+    });
+
+    setState(() {
+      equiposFiltrados = filtered;
+    });
   }
 
   @override
@@ -92,56 +133,62 @@ class _EquiposPageState extends State<EquiposPage> {
         onRefresh: _loadDevices,
         child: ListView(
           padding: const EdgeInsets.all(16),
-          children: equiposPorCategoria.entries.map((entry) {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Equipos ${entry.key}',
-                  style: const TextStyle(
-                      fontSize: 20, fontWeight: FontWeight.bold),
+          children: [
+            // 🔍 Campo de búsqueda
+            TextField(
+              controller: _searchController,
+              decoration: InputDecoration(
+                labelText: 'Buscar por Vendor o Referencia',
+                prefixIcon: const Icon(Icons.search),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
                 ),
-                const SizedBox(height: 12),
-                Wrap(
-                  spacing: 16,
-                  runSpacing: 16,
-                  children: entry.value.map((equipo) {
-                    return SizedBox(
-                      width: 300,
-                      child: Card(
-                        elevation: 2,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                equipo['vendor'],
-                                style: const TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.bold),
-                              ),
-                              const SizedBox(height: 8),
-                              Text('Referencia: ${equipo['reference']}'),
-                              Text(
-                                  'Capacidad: ${equipo['capacity']} ${equipo['type']}'),
-                              Text('Estado: ${equipo['status']}'),
-                              Text('Conversor: ${equipo['conversor']}'),
-                              Text(
-                                  'Ref. Transceiver: ${equipo['ref_transceiver']}'),
-                            ],
-                          ),
-                        ),
-                      ),
-                    );
-                  }).toList(),
-                ),
-                const SizedBox(height: 32),
-              ],
-            );
-          }).toList(),
+              ),
+            ),
+            const SizedBox(height: 20),
+
+            // 🧾 Tablas filtradas
+            ...equiposFiltrados.entries.map((entry) {
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Equipos ${entry.key}',
+                    style: const TextStyle(
+                        fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 12),
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: DataTable(
+                      columnSpacing: 16,
+                      columns: const [
+                        DataColumn(label: Text('Vendor')),
+                        DataColumn(label: Text('Referencia')),
+                        DataColumn(label: Text('Capacidad')),
+                        DataColumn(label: Text('Tipo')),
+                        DataColumn(label: Text('Estado')),
+                        DataColumn(label: Text('Conversor')),
+                        DataColumn(label: Text('Ref. Transceiver')),
+                      ],
+                      rows: entry.value.map((equipo) {
+                        return DataRow(cells: [
+                          DataCell(Text(equipo['vendor'])),
+                          DataCell(Text(equipo['reference'])),
+                          DataCell(Text(equipo['capacity'])),
+                          DataCell(Text(equipo['type'])),
+                          DataCell(Text(equipo['status'])),
+                          DataCell(Text(equipo['conversor'])),
+                          DataCell(Text(equipo['ref_transceiver'])),
+                        ]);
+                      }).toList(),
+                    ),
+                  ),
+                  const SizedBox(height: 32),
+                ],
+              );
+            }).toList(),
+          ],
         ),
       ),
     );
