@@ -1,32 +1,20 @@
 [
     {
         "_id": {
-            "$oid": "6848ad0e00cca71fbed67b46"
+            "$oid": "6848cb9300cca71fbed67b4e1"
         },
-        "device": "Generico2",
-        "user": "SoporteMC",
-        "pass_list": "$0p0rt3.m3d14",
-        "url": "http://mrtg.mediacommerce.co/cacti/",
-        "category": "MONITOREO"
+        "name": "Comcel",
+        "workload": "Lider de mesa",
+        "phone": "3104912678",
+        "email": "mesadeayuda@une.com.co"
     },
     {
         "_id": {
-            "$oid": "6848ad0e00cca71fbed67b47"
+            "$oid": "6848cb9300cca71fbed67b4e12"
         },
-        "device": "Hola",
-        "user": "SoporteMC",
-        "pass_list": "$0p0rt3.m3d14,S0p0rt3.m3d14",
-        "url": "",
-        "category": "CPE"
-    },
-    {
-        "_id": {
-            "$oid": "6848ad0e00cca71fbed67b42"
-        },
-        "device": "Generico4",
-        "user": "SoporteMC4",
-        "pass_list": "$0p0rt3.m3d14,S0p0rt3.m3d14",
-        "url": "http://mrtg.mediacommerce.co/cacti/",
-        "category": "MONITOREO"
+        "name": "Empresa de telecomunicaciones de bogota",
+        "workload": "Lider de mesa",
+        "phone": "3100000",
+        "email": "liderdeayuda@une.com.co"
     }
 ]

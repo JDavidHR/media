@@ -7,3 +7,4 @@ const user_collection = "users";
 const devices_collection = "devices";
 const pass_tools_collection = "pass_tools";
 const rg_devices_collection = "rg_devices";
+const client_information_collection = "client_information";

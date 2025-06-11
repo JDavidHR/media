@@ -8,14 +8,16 @@ class MongoDatabase {
       userCollection,
       rgDevicesCollection,
       devicesCollection,
-      passToolsCollection;
+      passToolsCollection,
+      clientInformationCollection;
   static connect() async {
     db = await Db.create(mongo_conn_url);
     await db.open();
     inspect(db);
     userCollection = db.collection(user_collection);
     rgDevicesCollection = db.collection(rg_devices_collection);
-    devicesCollection = db.collection(devicesCollection);
-    passToolsCollection = db.collection(passToolsCollection);
+    devicesCollection = db.collection(devices_collection);
+    passToolsCollection = db.collection(pass_tools_collection);
+    clientInformationCollection = db.collection(client_information_collection);
   }
 }

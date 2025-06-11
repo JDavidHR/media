@@ -4,7 +4,7 @@ import 'package:lottie/lottie.dart';
 import 'package:mc_dashboard/core/components/mcButton.dart';
 import 'package:mc_dashboard/core/components/mcTextfield.dart';
 import 'package:mc_dashboard/core/models/db_helper/mongodb_connection.dart';
-import 'package:mc_dashboard/dashboard/dashboard_base_page.dart';
+
 import 'package:mc_dashboard/pages.dart/home.dart';
 
 class LoginPage extends StatefulWidget {

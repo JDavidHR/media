@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mc_dashboard/dashboard/dashboard_base_page.dart';
+import 'package:mc_dashboard/pages.dart/client_information.dart';
 
 class MinimalMenuPage extends StatelessWidget {
   const MinimalMenuPage({super.key});
@@ -64,7 +65,14 @@ class MinimalMenuPage extends StatelessWidget {
                     context,
                     label: 'Informacion clientes',
                     icon: Icons.folder,
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const ClientInfoPage(),
+                        ),
+                      );
+                    },
                   ),
                 ],
               ),

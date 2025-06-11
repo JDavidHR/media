@@ -13,8 +13,6 @@ class _PassRGPageState extends State<PassRGPage> {
   List<Map<String, dynamic>> rgDevices = [];
   List<Map<String, dynamic>> filteredDevices = [];
   TextEditingController searchController = TextEditingController();
-  bool _isLoading = true;
-  String? _loadError;
 
   @override
   void initState() {
@@ -31,10 +29,7 @@ class _PassRGPageState extends State<PassRGPage> {
   }
 
   Future<void> _loadPassRG() async {
-    setState(() {
-      _isLoading = true;
-      _loadError = null;
-    });
+    setState(() {});
     try {
       final collection = MongoDatabase.db.collection('rg_devices');
       final data = await collection.find().toList();
