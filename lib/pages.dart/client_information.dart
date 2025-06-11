@@ -2,6 +2,7 @@ import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
 import 'package:mc_dashboard/core/models/db_helper/mongodb_connection.dart';
 import 'package:mc_dashboard/pages.dart/home.dart';
+import 'package:mongo_dart/mongo_dart.dart' as mdb;
 
 class ClientInfoPage extends StatefulWidget {
   const ClientInfoPage({super.key});
@@ -75,26 +76,137 @@ class _ClientInfoPageState extends State<ClientInfoPage> {
     });
   }
 
+  void showAddClientDialog() {
+    final nameController = TextEditingController();
+    final workloadController = TextEditingController();
+    final phoneController = TextEditingController();
+    final emailController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Agregar Cliente'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: nameController,
+                  decoration: const InputDecoration(labelText: 'Nombre'),
+                ),
+                TextField(
+                  controller: workloadController,
+                  decoration: const InputDecoration(labelText: 'Cargo'),
+                ),
+                TextField(
+                  controller: phoneController,
+                  keyboardType: TextInputType.phone,
+                  decoration: const InputDecoration(labelText: 'Teléfono'),
+                ),
+                TextField(
+                  controller: emailController,
+                  keyboardType: TextInputType.emailAddress,
+                  decoration: const InputDecoration(labelText: 'Email'),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancelar'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                final name = nameController.text.trim();
+                final workload = workloadController.text.trim();
+                final phone = phoneController.text.trim();
+                final email = emailController.text.trim();
+
+                if (name.isEmpty ||
+                    workload.isEmpty ||
+                    phone.isEmpty ||
+                    email.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                        content: Text('Todos los campos son obligatorios')),
+                  );
+                  return;
+                }
+
+                try {
+                  final coll =
+                      MongoDatabase.db.collection('client_information');
+                  await coll.insertOne({
+                    '_id': mdb.ObjectId(), // genera un ObjectId válido
+                    'name': name,
+                    'workload': workload,
+                    'phone': phone,
+                    'email': email,
+                  });
+
+                  Navigator.pop(context); // Cierra el diálogo
+                  _loadClients(); // Recarga la tabla
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                        content: Text('Cliente agregado exitosamente')),
+                  );
+                } catch (e) {
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Error al agregar cliente: $e')),
+                  );
+                }
+              },
+              child: const Text('Guardar'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const MinimalMenuPage(),
-            ),
-          );
-        },
-        icon: const Icon(Icons.arrow_back),
-        label: const Text('Volver'),
-        backgroundColor: Colors.black87,
-        foregroundColor: Colors.white,
-      ),
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('Clientes'),
+        actions: [
+          SizedBox(
+            width: 100,
+            height: 40,
+            child: FloatingActionButton.extended(
+              heroTag: 'addClientButton',
+              onPressed: showAddClientDialog,
+              // icon: const Icon(Icons.add),
+              label: const Text('Agregar'),
+              backgroundColor: Colors.green,
+              foregroundColor: Colors.white,
+            ),
+          ),
+          const SizedBox(width: 12),
+          SizedBox(
+            width: 100,
+            height: 40,
+            child: FloatingActionButton.extended(
+              heroTag: 'backButton',
+              onPressed: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const MinimalMenuPage(),
+                  ),
+                );
+              },
+              //icon: const Icon(Icons.arrow_back),
+              label: const Text('Volver'),
+              backgroundColor: Colors.black87,
+              foregroundColor: Colors.white,
+            ),
+          ),
+          const SizedBox(width: 12),
+        ],
         elevation: 0,
         backgroundColor: Colors.transparent,
         foregroundColor: Colors.black,
