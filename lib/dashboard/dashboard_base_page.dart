@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
-import 'package:mc_dashboard/pages.dart/equipos_page.dart';
-import 'package:mc_dashboard/pages.dart/home.dart';
-import 'package:mc_dashboard/pages.dart/pass_herramientas_page.dart';
+import 'package:mc_dashboard/pages.dart/device_page.dart';
+import 'package:mc_dashboard/pages.dart/home_page.dart';
+import 'package:mc_dashboard/pages.dart/pass_tools_page.dart';
 import 'package:mc_dashboard/pages.dart/pass_rg_page.dart';
 
 class DashboardBasePage extends StatefulWidget {

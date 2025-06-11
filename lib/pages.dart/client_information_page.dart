@@ -2,7 +2,7 @@ import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
 import 'package:mc_dashboard/core/components/mcTextfield.dart';
 import 'package:mc_dashboard/core/models/db_helper/mongodb_connection.dart';
-import 'package:mc_dashboard/pages.dart/home.dart';
+import 'package:mc_dashboard/pages.dart/home_page.dart';
 import 'package:mongo_dart/mongo_dart.dart' as mdb;
 
 class ClientInfoPage extends StatefulWidget {

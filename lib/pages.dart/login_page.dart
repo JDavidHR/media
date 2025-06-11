@@ -5,7 +5,7 @@ import 'package:mc_dashboard/core/components/mcButton.dart';
 import 'package:mc_dashboard/core/components/mcTextfield.dart';
 import 'package:mc_dashboard/core/models/db_helper/mongodb_connection.dart';
 
-import 'package:mc_dashboard/pages.dart/home.dart';
+import 'package:mc_dashboard/pages.dart/home_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});

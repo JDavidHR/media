@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mc_dashboard/dashboard/dashboard_base_page.dart';
-import 'package:mc_dashboard/pages.dart/client_information.dart';
+import 'package:mc_dashboard/pages.dart/client_information_page.dart';
 
 class MinimalMenuPage extends StatelessWidget {
   const MinimalMenuPage({super.key});
