@@ -8,3 +8,4 @@ const devices_collection = "devices";
 const pass_tools_collection = "pass_tools";
 const rg_devices_collection = "rg_devices";
 const client_information_collection = "client_information";
+const personal_odc_collection = "personal_odc";

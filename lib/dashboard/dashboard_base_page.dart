@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:mc_dashboard/pages.dart/device_page.dart';
 import 'package:mc_dashboard/pages.dart/home_page.dart';
+import 'package:mc_dashboard/pages.dart/odc_personal_page.dart';
 import 'package:mc_dashboard/pages.dart/pass_tools_page.dart';
 import 'package:mc_dashboard/pages.dart/pass_rg_page.dart';
 
@@ -26,6 +27,9 @@ class _DashboardBasePageState extends State<DashboardBasePage> {
           break;
         case 'Pass-Herramientas':
           _selectedPage = const PassHerramientasPage();
+          break;
+        case 'ODC':
+          _selectedPage = const OdcPage();
           break;
         default:
           _selectedPage = const Center(
